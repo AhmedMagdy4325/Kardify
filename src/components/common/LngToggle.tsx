@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import Button from "./ui/AppButton";
+import Button from "../ui/AppButton";
 
 export default function LngToggle() {
   const { i18n } = useTranslation();

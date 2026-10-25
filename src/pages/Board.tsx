@@ -1,25 +1,28 @@
-import { useParams } from "react-router-dom";
-
+import { useMemo, useRef, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import ListColumn from "../components/board/ListColumn";
-import { useSearchParams } from "react-router-dom";
-
-import { useAppSelector } from "../store/hooks";
-import { useMemo } from "react";
-import type { Card } from "../types";
-import AddListDialog from "@/components/board/AddListDialog";
-import NotFoundState from "@/components/NotFoundState";
-import AppButton from "@/components/ui/AppButton";
 import { Plus } from "lucide-react";
+import { DragDropProvider } from "@dnd-kit/react";
+import { move } from "@dnd-kit/helpers";
+import ListColumn from "../components/board/ListColumn";
+import AddListDialog from "@/components/board/AddListDialog";
 import CardDrawer from "@/components/board/CardDrawer";
+import NotFoundState from "@/components/common/NotFoundState";
+import AppButton from "@/components/ui/AppButton";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { moveCard } from "../store/cardsSlice";
+import type { Card } from "../types";
+
 export default function Board() {
   const { id } = useParams();
   const { t } = useTranslation("board");
+  const dispatch = useAppDispatch();
   const projects = useAppSelector((s) => s.projects);
   const lists = useAppSelector((s) => s.lists);
   const cards = useAppSelector((s) => s.cards);
   const [searchParams, setSearchParams] = useSearchParams();
   const openCardId = searchParams.get("card");
+
   const cardsByList = useMemo(() => {
     const groups: Record<string, Card[]> = {};
     for (const c of [...cards].sort((a, b) => a.order - b.order)) {
@@ -27,6 +30,21 @@ export default function Board() {
     }
     return groups;
   }, [cards]);
+
+  const cardsById = useMemo(
+    () =>
+      Object.fromEntries(cards.map((c) => [c.id, c])) as Record<string, Card>,
+    [cards],
+  );
+
+  const [draft, setDraft] = useState<Record<string, string[]> | null>(null);
+  const draftRef = useRef<Record<string, string[]> | null>(null);
+
+  function updateDraft(next: Record<string, string[]> | null) {
+    draftRef.current = next;
+    setDraft(next);
+  }
+
   const project = projects.find((p) => p.id === id);
 
   if (!project)
@@ -40,8 +58,15 @@ export default function Board() {
     );
 
   const projectLists = lists
-    .filter((l) => l.projectId === id)
+    .filter((l) => l.projectId === project.id)
     .sort((a, b) => a.order - b.order);
+
+  function cardsFor(listId: string): Card[] {
+    if (!draft) return cardsByList[listId] ?? [];
+    return (draft[listId] ?? [])
+      .map((cardId) => cardsById[cardId])
+      .filter((c): c is Card => Boolean(c));
+  }
 
   const openCard = cards.find((c) => c.id === openCardId);
   const drawerCard =
@@ -90,17 +115,44 @@ export default function Board() {
           />
         </div>
       ) : (
-        <div className="flex items-start gap-4 overflow-x-auto pb-2">
-          {projectLists.map((list) => (
-            <ListColumn
-              key={list.id}
-              list={list}
-              cards={cardsByList[list.id] ?? []}
-            />
-          ))}
-          <AddListDialog projectId={project.id} />
-        </div>
+        <DragDropProvider
+          onDragStart={() => {
+            const d: Record<string, string[]> = {};
+            for (const l of projectLists) {
+              d[l.id] = (cardsByList[l.id] ?? []).map((c) => c.id);
+            }
+            updateDraft(d);
+          }}
+          onDragOver={(event) => {
+            if (!draftRef.current) return;
+            updateDraft(move(draftRef.current, event));
+          }}
+          onDragEnd={(event) => {
+            const d = draftRef.current;
+            updateDraft(null);
+            if (event.canceled || !d) return;
+
+            const cardId = String(event.operation.source?.id);
+            for (const [listId, ids] of Object.entries(d)) {
+              const index = ids.indexOf(cardId);
+              if (index !== -1) {
+                dispatch(
+                  moveCard({ cardId, toListId: listId, toIndex: index }),
+                );
+                break;
+              }
+            }
+          }}
+        >
+          <div className="flex items-start gap-4 overflow-x-auto pb-2">
+            {projectLists.map((list) => (
+              <ListColumn key={list.id} list={list} cards={cardsFor(list.id)} />
+            ))}
+            <AddListDialog projectId={project.id} />
+          </div>
+        </DragDropProvider>
       )}
+
       <CardDrawer card={drawerCard} onClose={closeDrawer} />
     </div>
   );

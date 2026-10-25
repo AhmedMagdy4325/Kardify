@@ -17,8 +17,8 @@ export function loadState(): PersistedState | undefined {
     ) {
       return parsed;
     }
-  } catch (error) {
-    console.warn("Could not load saved state:", error);
+  } catch {
+    // corrupted JSON or storage blocked: fall back to the seed data
   }
   return undefined;
 }
@@ -26,7 +26,7 @@ export function loadState(): PersistedState | undefined {
 export function saveState(state: PersistedState) {
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
-  } catch (error) {
-    console.warn("Could not save state:", error);
+  } catch {
+    // storage full or blocked: the app keeps working, it just won't persist
   }
 }

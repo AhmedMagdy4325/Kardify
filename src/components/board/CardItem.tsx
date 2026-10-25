@@ -50,7 +50,7 @@ export default function CardItem({ card }: CardItemProps) {
             dir="auto"
             onClick={openCard}
             className={[
-              "text-start wrap-break-word after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent",
+              "text-start wrap-break-word focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent  cursor-pointer",
               card.completed ? "line-through text-foreground-muted" : "",
             ].join(" ")}
           >

@@ -1,7 +1,7 @@
 import { Menu } from "lucide-react";
 import AppButton from "../ui/AppButton";
-import ThemeToggle from "../ThemeToggle";
-import LngToggle from "../LngToggle";
+import ThemeToggle from "../common/ThemeToggle";
+import LngToggle from "../common/LngToggle";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

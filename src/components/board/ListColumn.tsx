@@ -14,11 +14,38 @@ import { useState } from "react";
 import RenameListDialog from "./RenameListDialog";
 import DeleteListDialog from "./DeleteListDialog";
 import AddCardDialog from "./AddCardDialog";
+import { useDroppable } from "@dnd-kit/react";
+import { useSortable } from "@dnd-kit/react/sortable";
+import { CollisionPriority } from "@dnd-kit/abstract";
 
 type ListColumnProps = {
   cards: CardType[];
   list: ListType;
 };
+
+function SortableCard({
+  card,
+  index,
+  listId,
+}: {
+  card: CardType;
+  index: number;
+  listId: string;
+}) {
+  const { ref, isDragging } = useSortable({
+    id: card.id,
+    index,
+    group: listId,
+    type: "item",
+    accept: "item",
+  });
+
+  return (
+    <li ref={ref} className={isDragging ? "opacity-50" : undefined}>
+      <CardItem card={card} />
+    </li>
+  );
+}
 
 export default function ListColumn({ cards, list }: ListColumnProps) {
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
@@ -26,6 +53,13 @@ export default function ListColumn({ cards, list }: ListColumnProps) {
   const [addCardOpen, setAddCardOpen] = useState(false);
   const { i18n, t } = useTranslation(["board", "common"]);
   const dir = i18n.dir();
+
+  const { ref: dropRef } = useDroppable({
+    id: list.id,
+    type: "column",
+    accept: "item",
+    collisionPriority: CollisionPriority.Low,
+  });
 
   return (
     <div className="w-72 shrink-0 flex flex-col gap-3">
@@ -66,16 +100,22 @@ export default function ListColumn({ cards, list }: ListColumnProps) {
           </DropdownMenu>
         </div>
       </div>
-      <ul className="flex flex-col gap-2 overflow-y-auto overflow-x-hidden min-h-16 max-h-[70vh]">
+      <ul
+        className="flex flex-col gap-2 overflow-y-auto overflow-x-hidden min-h-16 max-h-[70vh]"
+        ref={dropRef}
+      >
         {cards.length === 0 && (
           <li className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-foreground-muted">
             {t("board:noCards")}
           </li>
         )}
-        {cards.map((card) => (
-          <li key={card.id}>
-            <CardItem card={card} />
-          </li>
+        {cards.map((card, index) => (
+          <SortableCard
+            key={card.id}
+            card={card}
+            index={index}
+            listId={list.id}
+          />
         ))}
       </ul>
 

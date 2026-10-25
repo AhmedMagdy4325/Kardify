@@ -6,6 +6,9 @@ import type { Card } from "../types";
 import { cards as dummyCards } from "../data/dummy";
 import { deleteList } from "./listsSlice";
 
+import { current } from "@reduxjs/toolkit";
+import { moveCard as moveCardInList } from "@/utils/moveCard";
+
 const initialState: Card[] = dummyCards;
 
 const cardsSlice = createSlice({
@@ -36,6 +39,17 @@ const cardsSlice = createSlice({
       const card = state.find((c) => c.id === action.payload);
       if (card) card.completed = !card.completed;
     },
+    moveCard(
+      state,
+      action: PayloadAction<{
+        cardId: string;
+        toListId: string;
+        toIndex: number;
+      }>,
+    ) {
+      const { cardId, toListId, toIndex } = action.payload;
+      return moveCardInList(current(state), cardId, toListId, toIndex);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(deleteList, (state, action) => {
@@ -44,7 +58,7 @@ const cardsSlice = createSlice({
   },
 });
 
-export const { addCard, editCard, deleteCard, toggleComplete } =
+export const { addCard, editCard, deleteCard, moveCard, toggleComplete } =
   cardsSlice.actions;
 
 export default cardsSlice.reducer;
