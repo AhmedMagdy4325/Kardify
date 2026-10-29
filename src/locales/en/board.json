@@ -39,5 +39,7 @@
   "deleteCardTitle": "Delete this card?",
   "deleteCardMessage": "“{{title}}” will be deleted. This can't be undone.",
   "overdue": "Overdue",
-  "dueSoon": "Due soon"
+  "dueSoon": "Due soon",
+  "title": "Title",
+  "description": "Description"
 }

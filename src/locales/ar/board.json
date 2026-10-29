@@ -40,5 +40,7 @@
   "deleteCardTitle": "حذف هذه البطاقة؟",
   "deleteCardMessage": "سيتم حذف «{{title}}». لا يمكن التراجع عن هذا.",
   "overdue": "متأخرة",
-  "dueSoon": "تستحق قريبًا"
+  "dueSoon": "تستحق قريبًا",
+  "title": "العنوان",
+  "description": "الوصف"
 }
