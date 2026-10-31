@@ -15,11 +15,12 @@ import { Plus } from "lucide-react";
 import { addList } from "@/store/listsSlice";
 import { Input } from "../ui/input";
 
-interface AddListDialogProps {
+type AddListDialogProps = {
   projectId: string;
-  trigger?: ReactNode;
-}
+  trigger?: ReactNode; // optional: a default "Add list" button is used without it
+};
 
+/** Dialog for adding a list to a project. It owns its open state. */
 export default function AddListDialog({
   projectId,
   trigger,
@@ -30,6 +31,8 @@ export default function AddListDialog({
   const [title, setTitle] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
 
+  // Single place that opens/closes; closing always clears the fields, however
+  // it was closed (Escape, outside click, Cancel or submit)
   function handleOpenChange(next: boolean) {
     setOpen(next);
     if (!next) {
@@ -44,6 +47,7 @@ export default function AddListDialog({
       setError(t("titleRequired"));
       return;
     }
+    // The reducer computes the list's `order`; only the id is created here
     dispatch(
       addList({ id: crypto.randomUUID(), projectId, title: title.trim() }),
     );
@@ -52,6 +56,7 @@ export default function AddListDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
+      {/* asChild needs exactly one element: the given trigger or the default button */}
       <DialogTrigger asChild>
         {trigger ?? (
           <AppButton

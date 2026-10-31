@@ -12,10 +12,13 @@ type CardItemProps = {
   card: CardType;
 };
 
+/** A card on the board: complete checker, title (opens the drawer), due date and priority. */
 export default function CardItem({ card }: CardItemProps) {
   const { t } = useTranslation("board");
   const dispatch = useAppDispatch();
   const [, setSearchParams] = useSearchParams();
+
+  // The open card lives in the URL (?card=id). Copy the current params and set `card`.
   function openCard() {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
@@ -26,6 +29,7 @@ export default function CardItem({ card }: CardItemProps) {
   return (
     <div className=" relative bg-surface border border-border rounded-xl p-3 flex flex-col gap-2">
       <div className="flex gap-2 items-center">
+        {/* Checker: toggles complete (announced as a checkbox to screen readers) */}
         <AppButton
           variant="ghost"
           size="xs"
@@ -45,6 +49,7 @@ export default function CardItem({ card }: CardItemProps) {
           )}
         </AppButton>
         <h3 className="min-w-0 text-sm font-medium">
+          {/* Title opens the drawer; completed cards are muted and struck through */}
           <button
             type="button"
             dir="auto"

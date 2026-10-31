@@ -8,6 +8,7 @@ import AppButton from "../ui/AppButton";
 import { todayString } from "@/utils/date";
 import type { Priority } from "@/types";
 
+// What the form hands back. `order`, `completed` and ids are added elsewhere.
 export type CardFormValues = {
   title: string;
   description: string;
@@ -16,7 +17,7 @@ export type CardFormValues = {
 };
 
 type CardFormProps = {
-  initialValues?: CardFormValues;
+  initialValues?: CardFormValues; // set when editing, empty when creating
   submitLabel: string;
   onSubmit: (values: CardFormValues) => void;
   onCancel: () => void;
@@ -24,6 +25,7 @@ type CardFormProps = {
 
 const priorities: Priority[] = ["low", "medium", "high"];
 
+/** Create/edit form for a card. It validates, then passes clean values to `onSubmit`. */
 export default function CardForm({
   initialValues,
   submitLabel,
@@ -45,12 +47,14 @@ export default function CardForm({
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const trimmedTitle = title.trim();
-    let valid = true;
+    let valid = true; // check every field so all errors show at once
 
     if (!trimmedTitle) {
       setTitleError(t("titleRequired"));
       valid = false;
     }
+    // Reject a past date only if the user changed it, so an already overdue
+    // card can still be edited and saved.
     if (
       dueDate &&
       dueDate !== initialValues?.dueDate &&
@@ -65,6 +69,7 @@ export default function CardForm({
       title: trimmedTitle,
       description: description.trim(),
       priority,
+      // A cleared date field is "", stored as no date instead of an empty string
       dueDate: dueDate || undefined,
     });
   }
@@ -95,7 +100,7 @@ export default function CardForm({
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
-            setTitleError("");
+            setTitleError(""); // clear the error once the user starts fixing it
           }}
           aria-invalid={!!titleError}
           aria-describedby={titleError ? "card-title-error" : undefined}
@@ -120,6 +125,7 @@ export default function CardForm({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="card-due">{t("dueDate")}</Label>
+        {/* min stops the picker from offering past days */}
         <Input
           id="card-due"
           type="date"

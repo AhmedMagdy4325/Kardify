@@ -17,9 +17,10 @@ type DeleteCardDialogProps = {
   card: CardType;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onDeleted: () => void;
+  onDeleted: () => void; // lets the drawer close itself after the delete
 };
 
+/** Confirmation before deleting a card. Opened from the card drawer. */
 export default function DeleteCardDialog({
   card,
   open,
@@ -39,12 +40,14 @@ export default function DeleteCardDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t("deleteCardTitle")}</AlertDialogTitle>
+          {/* dir="auto": the card title may be in a different language than the UI */}
           <AlertDialogDescription dir="auto">
             {t("deleteCardMessage", { title: card.title })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{t("common:cancel")}</AlertDialogCancel>
+          {/* The ! forces the danger colors over the default button background */}
           <AlertDialogAction
             className="bg-danger! text-accent-foreground! hover:bg-danger/90!"
             onClick={handleDelete}

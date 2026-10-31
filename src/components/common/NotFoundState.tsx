@@ -30,6 +30,7 @@ export default function NotFoundState({
           <p className="max-w-sm text-sm text-foreground-muted">{message}</p>
         )}
       </div>
+      {/* Link to the home page in case not found */}
       <Link
         to={linkTo}
         className="mt-2 inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"

@@ -19,6 +19,7 @@ type RenameListDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 
+/** Dialog for renaming a list. Opened from the list menu, which controls `open`. */
 export default function RenameListDialog({
   list,
   open,
@@ -37,6 +38,8 @@ export default function RenameListDialog({
   );
 }
 
+// Lives inside DialogContent, so it remounts and re-reads list.title every
+// time the dialog opens (no stale text after a cancelled edit).
 function RenameListForm({
   list,
   onDone,
@@ -52,6 +55,7 @@ function RenameListForm({
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const trimmed = title.trim();
+    // Reject empty or whitespace-only titles
     if (!trimmed) return setError(t("titleRequired"));
     dispatch(renameList({ id: list.id, title: trimmed }));
     onDone();

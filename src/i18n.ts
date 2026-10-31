@@ -16,13 +16,16 @@ import enProjects from "./locales/en/projects.json";
 import enNotFound from "./locales/en/notFound.json";
 import enHome from "./locales/en/home.json";
 
+// Changeing app direction
 function applyDirection(lng: string) {
   document.documentElement.lang = lng;
   document.documentElement.dir = i18n.dir(lng);
 }
 
+// Apply Direction change on langugae change
 i18n.on("languageChanged", applyDirection);
 
+// Data resources
 const resources = {
   en: {
     common: enCommon,
@@ -47,8 +50,8 @@ i18n
     resources,
     fallbackLng: "en", // Fallback if a translation is missing
     supportedLngs: ["en", "ar"],
-    ns: ["common", "home", "board", "projects", "notFound"], // Your "pages" / namespaces
-    defaultNS: "common",
+    ns: ["common", "home", "board", "projects", "notFound"], // Namespaces
+    defaultNS: "common", // Default namespace
     interpolation: {
       escapeValue: false, // React already safes from xss
     },

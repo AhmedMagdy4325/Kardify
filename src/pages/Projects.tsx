@@ -2,9 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "@/store/hooks";
 import ProjectCard from "@/components/projects/ProjectCard";
-
 import { Plus } from "lucide-react";
-
 import CreateProjectDialog from "@/components/projects/CreateProjectDialog";
 
 export default function Projects() {
@@ -12,6 +10,9 @@ export default function Projects() {
   const projects = useAppSelector((s) => s.projects);
   const lists = useAppSelector((s) => s.lists);
 
+  {
+    /* List counts for the project, saved to avoide over calculate on each render and only changes on lists change  */
+  }
   const listCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const l of lists) counts[l.projectId] = (counts[l.projectId] ?? 0) + 1;
@@ -23,7 +24,7 @@ export default function Projects() {
       <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold">{t("title")}</h1>
       </div>
-
+      {/* if no projects show create project message */}
       {projects.length === 0 ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center gap-2 text-center">
           <p className="text-lg font-semibold">{t("emptyTitle")}</p>
@@ -42,6 +43,7 @@ export default function Projects() {
               />
             </>
           ))}
+          {/* create project dialog shows on button click */}
           <CreateProjectDialog
             trigger={
               <button

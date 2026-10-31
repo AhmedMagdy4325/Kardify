@@ -23,6 +23,7 @@ export default function Home() {
         </p>
 
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+          {/* on click go to projects page */}
           <Link
             to="/projects"
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -30,6 +31,7 @@ export default function Home() {
             {t("goToProjects")}
             <ArrowRight size={16} aria-hidden className="rtl:rotate-180" />
           </Link>
+          {/* on click open create project dialog */}
           <CreateProjectDialog
             trigger={
               <AppButton variant="secondary" className="px-5 py-2.5">

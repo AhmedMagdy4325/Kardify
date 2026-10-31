@@ -16,11 +16,13 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
+/** Dialog for adding a card to a list. The list's "Add card" button controls `open`. */
 export default function AddCardDialog({ listId, open, onOpenChange }: Props) {
   const { t } = useTranslation(["board", "common"]);
   const dispatch = useAppDispatch();
 
   function handleAdd(values: CardFormValues) {
+    // Only the id is created here; the reducer adds `order` and `completed`
     dispatch(addCard({ id: crypto.randomUUID(), listId, ...values }));
     onOpenChange(false);
   }
@@ -32,6 +34,7 @@ export default function AddCardDialog({ listId, open, onOpenChange }: Props) {
           <DialogTitle>{t("addCard")}</DialogTitle>
           <DialogDescription>{t("addCardDescription")}</DialogDescription>
         </DialogHeader>
+        {/* The form is mounted inside DialogContent, so it starts empty each time */}
         <CardForm
           submitLabel={t("common:create")}
           onSubmit={handleAdd}

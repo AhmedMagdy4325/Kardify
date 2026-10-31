@@ -17,6 +17,11 @@ type EditProjectDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 
+/**
+ * Dialog for editing a project's name and description.
+ * It has no trigger of its own: the project card's menu opens it by setting
+ * `open`. It reuses ProjectForm, so validation matches the create dialog.
+ */
 export default function EditProjectDialog({
   project,
   open,
@@ -37,6 +42,9 @@ export default function EditProjectDialog({
           <DialogTitle>{t("editProject")}</DialogTitle>
           <DialogDescription>{t("editDescription")}</DialogDescription>
         </DialogHeader>
+        {/* The form is mounted inside DialogContent, so it reads the project's
+            current values every time the dialog opens. Cancelling an edit never
+            leaves stale text behind for the next time. */}
         <ProjectForm
           initialName={project.name}
           initialDescription={project.description}

@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
+/* the app layout where there is sidebar */
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (

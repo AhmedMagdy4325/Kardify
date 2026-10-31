@@ -4,6 +4,9 @@ import NotFoundState from "@/components/common/NotFoundState";
 export default function NotFound() {
   const { t } = useTranslation("notFound");
 
+  {
+    /* Passing the translated title, message and button text to the Not found component */
+  }
   return (
     <NotFoundState
       code="404"

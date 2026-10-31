@@ -23,6 +23,8 @@ type ListColumnProps = {
   list: ListType;
 };
 
+// One draggable card. `group` is the list it is currently shown in (not
+// card.listId), so dnd-kit and the drag draft agree while dragging.
 function SortableCard({
   card,
   index,
@@ -47,13 +49,17 @@ function SortableCard({
   );
 }
 
+/** One list: header with menu, droppable card area, and an add-card button. */
 export default function ListColumn({ cards, list }: ListColumnProps) {
+  // Open state of the three dialogs
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [addCardOpen, setAddCardOpen] = useState(false);
   const { i18n, t } = useTranslation(["board", "common"]);
   const dir = i18n.dir();
 
+  // Makes the list a drop target, so an empty list can receive cards.
+  // Low priority: hovering over a card wins over hovering over the list.
   const { ref: dropRef } = useDroppable({
     id: list.id,
     type: "column",
@@ -63,6 +69,7 @@ export default function ListColumn({ cards, list }: ListColumnProps) {
 
   return (
     <div className="w-72 shrink-0 flex flex-col gap-3">
+      {/* Header: title, card count, menu */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
           <h2
@@ -100,6 +107,8 @@ export default function ListColumn({ cards, list }: ListColumnProps) {
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Cards. min-h keeps an empty list tall enough to drop into. */}
       <ul
         className="flex flex-col gap-2 overflow-y-auto overflow-x-hidden min-h-16 max-h-[70vh]"
         ref={dropRef}
@@ -128,6 +137,8 @@ export default function ListColumn({ cards, list }: ListColumnProps) {
         <Plus size={16} aria-hidden />
         {t("addCard")}
       </AppButton>
+
+      {/* Dialogs sit outside the menu, so closing the menu doesn't unmount them */}
       <RenameListDialog
         list={list}
         open={renameOpen}

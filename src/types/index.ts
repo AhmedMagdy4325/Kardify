@@ -1,5 +1,10 @@
+// Defining my types
+
+// The app is consist of 3 arrays connected by ids
+// Priorities for priority badge
 export type Priority = "high" | "medium" | "low";
 
+// Project type
 export type Project = {
   id: string;
   name: string;
@@ -7,6 +12,7 @@ export type Project = {
   description: string;
 };
 
+// List type
 export type List = {
   id: string;
   projectId: string;
@@ -14,6 +20,7 @@ export type List = {
   order: number;
 };
 
+// Card type
 export type Card = {
   id: string;
   listId: string;

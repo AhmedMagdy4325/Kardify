@@ -15,11 +15,12 @@ import { deleteList } from "@/store/listsSlice";
 
 type DeleteListDialogProps = {
   list: ListType;
-  cardCount: number;
+  cardCount: number; // shown so the user knows what they will lose
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
+/** Confirmation before deleting a list. Opened from the list menu. */
 export default function DeleteListDialog({
   list,
   cardCount,
@@ -35,6 +36,8 @@ export default function DeleteListDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>{t("deleteListTitle")}</AlertDialogTitle>
           <AlertDialogDescription>
+            {/* Zero cards has its own message; otherwise `count` picks the
+                plural form for the current language */}
             {cardCount === 0
               ? t("deleteListEmpty", { title: list.title })
               : t("deleteListMessage", { title: list.title, count: cardCount })}
@@ -42,6 +45,7 @@ export default function DeleteListDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>{t("common:cancel")}</AlertDialogCancel>
+          {/* The cards slice removes this list's cards when it sees deleteList */}
           <AlertDialogAction
             className="bg-danger/90! text-accent-foreground hover:opacity-80"
             onClick={() => dispatch(deleteList(list.id))}

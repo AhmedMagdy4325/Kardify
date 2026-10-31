@@ -10,6 +10,10 @@ import HomeLayout from "./components/layout/HomeLayout";
 function App() {
   return (
     <>
+      {/*
+     Defning Routes which have 2 provided layouts
+     one for home and notfound page and another for the other pages 
+     */}
       <Routes>
         <Route element={<HomeLayout />}>
           <Route path="/" element={<Home />} />

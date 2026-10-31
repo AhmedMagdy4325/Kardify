@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 type HeaderProps = { onMenuClick?: () => void };
-
+/* The header to have the title, switching buttons and menu button for small screens */
 export default function Header({ onMenuClick }: HeaderProps) {
   const { t } = useTranslation();
   return (
